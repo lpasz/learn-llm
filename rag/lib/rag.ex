@@ -4,15 +4,15 @@ defmodule Rag do
   """
 
   @doc """
-  Hello world.
-
-  ## Examples
-
-      iex> Rag.hello()
-      :world
-
+  First naive chunker, we are doing the bare min
   """
-  def hello do
-    :world
+  def raggfy(file) do
+    file
+    |> Rag.Chunker.stream_chunks()
+    |> Enum.map(fn chunk ->
+      embed = Rag.LLM.embed(chunk)
+
+      {:ok, _} = Rag.Documents.create(chunk, embed)
+    end)
   end
 end
