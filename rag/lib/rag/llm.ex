@@ -1,4 +1,25 @@
 defmodule Rag.LLM do
+  def chat(prompt) do
+    chunks = Rag.Documents.similar(prompt)
+
+    context =
+      chunks
+      |> Enum.map(& &1.content)
+      |> Enum.join("\n\n")
+
+    prompt("""
+    Você é um assistente que responde APENAS em português do Brasil.
+
+    Use o contexto abaixo na resposta
+
+    Contexto:
+    #{context}
+
+    Pergunta:
+    #{prompt}
+    """)
+  end
+
   @doc """
   This calls the local llm that we are running with ollama.
 
@@ -15,7 +36,8 @@ defmodule Rag.LLM do
     "Churrascó is a type of Argentine steakhouse or bar that specializes in grilling and roasting beef, pork, lamb, and other meats. The cuisine is typically served with side dishes such as chimichurri sauce, empanadas, fried potatoes, and coleslaw. Churrascos are known for their extensive menu of traditional Argentine steakhouse dishes like mariscos (fish stew), choripán (steak sandwich), and grilled octopus. Churrascó is typically open until late at night or early in the morning, so it can be a popular spot for nightlife enthusiasts."    
 
   """
-  def chat(prompt) do
+  def prompt(prompt) do
+    IO.puts(prompt)
     url = "http://localhost:11434/api/generate"
 
     body = %{
@@ -26,7 +48,8 @@ defmodule Rag.LLM do
 
     {:ok, response} =
       Req.post(url,
-        json: body
+        json: body,
+        receive_timeout: 60_000
       )
 
     response.body["response"]
@@ -37,7 +60,7 @@ defmodule Rag.LLM do
 
     body = %{
       model: "nomic-embed-text",
-      prompt: text,
+      prompt: text
     }
 
     {:ok, response} =
