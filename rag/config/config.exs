@@ -7,6 +7,7 @@ config :rag, Rag.Repo,
   password: "postgres",
   hostname: "localhost",
   database: "rag_dev",
-  port: 5432
+  port: 5432,
+  types: Rag.PostgrexTypes 
 
 config :rag, ecto_repos: [Rag.Repo]
