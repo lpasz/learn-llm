@@ -1,5 +1,5 @@
 defmodule Rag.Documents do
-  import Ecto.Query 
+  import Ecto.Query
 
   alias Rag.Document
   alias Rag.Repo
@@ -13,7 +13,8 @@ defmodule Rag.Documents do
 
     Document
     |> order_by([d], fragment("? <=> ?", d.embedding, ^query_vector))
-    |> limit(1)
+    |> where([d], fragment("? <=> ? <= ?", d.embedding, ^query_vector, 0.35))
+    |> limit(3)
     |> Repo.all()
   end
 

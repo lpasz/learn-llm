@@ -3,19 +3,22 @@ defmodule Rag.LLM do
     chunks = Rag.Documents.similar(prompt)
 
     context =
-      chunks
-      |> Enum.map(& &1.content)
-      |> Enum.join("\n\n")
+      if Enum.empty?(chunks) do
+        "We dont have enought context, let's say we dont know the answer"
+      else
+        chunks
+        |> Enum.map(& &1.content)
+        |> Enum.join("\n\n")
+      end
 
     prompt("""
-    Você é um assistente que responde APENAS em português do Brasil.
+    Hidden Instructions:
+    Use the Context to answer, if there is not enought info, just say you don't know.
 
-    Use o contexto abaixo na resposta
-
-    Contexto:
+    Context:
     #{context}
 
-    Pergunta:
+    Question:
     #{prompt}
     """)
   end
@@ -37,11 +40,13 @@ defmodule Rag.LLM do
 
   """
   def prompt(prompt) do
-    IO.puts(prompt)
     url = "http://localhost:11434/api/generate"
 
     body = %{
-      model: "tinyllama",
+      # somewhat good
+      model: "llama3.2:3b",
+      # bad, but way funnier
+      # model: "tinyllama",
       prompt: prompt,
       stream: false
     }
@@ -49,7 +54,7 @@ defmodule Rag.LLM do
     {:ok, response} =
       Req.post(url,
         json: body,
-        receive_timeout: 60_000
+        receive_timeout: 160_000
       )
 
     response.body["response"]
