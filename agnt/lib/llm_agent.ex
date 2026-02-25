@@ -56,17 +56,19 @@ defmodule LLMAgent do
         response = a |> String.codepoints() |> Enum.frequencies() |> Map.get(b)
 
         agent_loop(
-        text <> """
-        You decided to call:
-        {
-        "action": "count_letters",
-        "arguments": { "word": "#{a}", "letter": #{b} }
-        }
-        Tool response (observation):
-        ----- TOOL RESULT START -----
-        There is exactly #{response} #{b}'s' in #{a}
-        ----- TOOL RESULT END -----
-        """)
+          text <>
+            """
+            You decided to call:
+            {
+            "action": "count_letters",
+            "arguments": { "word": "#{a}", "letter": #{b} }
+            }
+            Tool response (observation):
+            ----- TOOL RESULT START -----
+            There is exactly #{response} #{b}'s' in #{a}
+            ----- TOOL RESULT END -----
+            """
+        )
 
       {:ok, %{"final_answer" => text}} ->
         text
