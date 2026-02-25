@@ -108,5 +108,5 @@ defmodule LLMAgent do
       )
 
     response.body["response"]
-  # end
+  end
 end
