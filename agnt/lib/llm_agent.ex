@@ -1,4 +1,4 @@
-defmodule Agnt.LLM do
+defmodule LLMAgent do
   # This system prompt is repeated every single turn — critical for 3B models
   @system """
   You are a STRICT JSON-ONLY AI agent. 
@@ -108,5 +108,5 @@ defmodule Agnt.LLM do
       )
 
     response.body["response"]
-  end
+  # end
 end
